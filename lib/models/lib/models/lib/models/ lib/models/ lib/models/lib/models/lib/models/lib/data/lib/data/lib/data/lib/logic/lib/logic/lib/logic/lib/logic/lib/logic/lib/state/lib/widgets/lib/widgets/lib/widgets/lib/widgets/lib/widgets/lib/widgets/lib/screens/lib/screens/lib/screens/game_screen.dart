@@ -271,7 +271,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildConsequenceView(dynamic result) {
+    Widget _buildConsequenceView(dynamic result) {
     final choice = result.choiceType as ChoiceType;
     final argueWon = result.argueWon as bool?;
 
@@ -295,11 +295,63 @@ class _GameScreenState extends State<GameScreen> {
     }
 
     final isLastRound = widget.controller.isEpisodeComplete;
+    final unlockedTrait = widget.controller.justUnlockedTrait
+        ? widget.controller.newlyUnlockedTraitName
+        : null;
 
     return Column(
       key: const ValueKey('consequence'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (unlockedTrait != null) ...[
+          Container(
+            padding: const EdgeInsets.all(14),
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFB983FF), Color(0xFF4DA8FF)],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFB983FF).withOpacity(0.4),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Text('🏅', style: TextStyle(fontSize: 24)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'NEW TRAIT UNLOCKED',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      Text(
+                        _formatTraitName(unlockedTrait),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
           decoration: BoxDecoration(
@@ -396,4 +448,10 @@ class _GameScreenState extends State<GameScreen> {
       ],
     );
   }
-}
+
+  String _formatTraitName(String trait) {
+    return trait
+        .split('_')
+        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ');
+  }
